@@ -474,6 +474,41 @@ DateTime RTC_DS3231::now() {
   return DateTime (y, m, d, hh, mm, ss);
 }
 
+///////////////////////////////////////////////
+// Test Nico
+///////////////////////////////////////////////
+float RTC_DS3231::getTemperature() {
+	// Checks the internal thermometer on the DS3231 and returns the 
+	// temperature as a floating-point value.
+
+  // Updated / modified a tiny bit from "Coding Badly" and "Tri-Again"
+  // http://forum.arduino.cc/index.php/topic,22301.0.html
+  
+  byte tMSB, tLSB;
+  float temp3231;
+  
+  // temp registers (11h-12h) get updated automatically every 64s
+  //Wire.beginTransmission(CLOCK_ADDRESS);
+  Wire.beginTransmission(DS3231_ADDRESS);
+  Wire.write(0x11);
+  Wire.endTransmission();
+  //  Wire.requestFrom(CLOCK_ADDRESS, 2);
+  Wire.requestFrom(DS3231_ADDRESS, 2);
+
+  // Should I do more "if available" checks here?
+  if(Wire.available()) {
+    tMSB = Wire.read(); //2's complement int portion
+    tLSB = Wire.read(); //fraction portion
+
+    temp3231 = ((((short)tMSB << 8) | (short)tLSB) >> 6) / 4.0;
+  }
+  else {
+    temp3231 = -9999; // Some obvious error value
+  }
+   
+  return temp3231;
+}
+
 Ds3231SqwPinMode RTC_DS3231::readSqwPinMode() {
   int mode;
 

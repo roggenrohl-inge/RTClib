@@ -103,6 +103,7 @@ public:
     static DateTime now();
     static Ds3231SqwPinMode readSqwPinMode();
     static void writeSqwPinMode(Ds3231SqwPinMode mode);
+    float getTemperature();
 };
 
 
